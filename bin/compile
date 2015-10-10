@@ -10,7 +10,7 @@ ENV_DIR=$3
 EMACS_VERSION="emacs-24.5"
 EMACS_SOURCE_URL="http://ftp.jaist.ac.jp/pub/GNU/emacs/$EMACS_VERSION.tar.gz"
 
-VENDOR_DIR=$BUILD_DIR/vendor
+VENDOR_DIR=$BUILD_DIR/.heroku/vendor
 
 indent() {
   sed -u 's/^/       /'

@@ -4,5 +4,5 @@
 cat << EOF
 ---
 config_vars:
-  PATH: $PATH:$BUILD_DIR/vendor/bin
+  PATH: $PATH:$BUILD_DIR/.heroku/vendor/bin
 EOF
