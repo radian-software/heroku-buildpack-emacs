@@ -7,8 +7,8 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-EMACS_VERSION="emacs-24.5"
-EMACS_SOURCE_URL="http://ftp.jaist.ac.jp/pub/GNU/emacs/$EMACS_VERSION.tar.gz"
+VERSION="24.5"
+EMACS_SOURCE_URL="http://ftp.jaist.ac.jp/pub/GNU/emacs/emacs-$VERSION.tar.gz"
 
 VENDOR_DIR=$BUILD_DIR/.heroku/vendor
 
@@ -21,13 +21,13 @@ echo "BEGIN buildpack compile [$*]" | indent
 echo "-----> Build & Install Emacs" | indent
 
 curl -L --silent $EMACS_SOURCE_URL | tar xz
-cd $EMACS_VERSION
-./configure --without-all --prefix=$VENDOR_DIR | indent
+cd emacs-$VERSION
+./configure –-without-all -–without-x --prefix=$VENDOR_DIR | indent
 make | indent
 make install | indent
 
 # Transfer binary to other server
-tar czvf $BUILD_DIR/$EMACS_VERSIO-heroku-bin.tar.gz $VENDOR_DIR
+tar czvf $BUILD_DIR/emacs-$VERSION-heroku-bin.tar.gz $VENDOR_DIR
 # scp $BUILD_DIR/$EMACS_VERSIO-heroku-bin.tar.gz {{$MY_SERVER}}
 
 echo "...done" | indent
