@@ -22,7 +22,7 @@ echo "-----> Build & Install Emacs" | indent
 
 curl -L --silent $EMACS_SOURCE_URL | tar xz
 cd emacs-$VERSION
-./configure –-without-all -–without-x --prefix=$VENDOR_DIR | indent
+./configure --without-all --without-x --prefix=$VENDOR_DIR | indent
 make | indent
 make install | indent
 
