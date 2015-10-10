@@ -1,16 +1,33 @@
-#!/bin/sh
+#!/bin/bash
+# Usage: bin/compile BUILD_DIR CACHE_DIR ENV_DIR
+
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+EMACS_VERSION="emacs-24.5"
+EMACS_SOURCE_URL="http://ftp.jaist.ac.jp/pub/GNU/emacs/$EMACS_VERSION.tar.gz"
+
+VENDOR_DIR=$BUILD_DIR/vendor
 
 indent() {
   sed -u 's/^/       /'
 }
 
-echo "-----> Found a hello.txt"
+echo "BEGIN buildpack compile [$*]" | indent
 
-# if hello.txt is empty, abort the build
-if [ ! -s $1/hello.txt ]; then
-  echo "hello.txt was empty" | indent
-  exit 1
-fi
+echo "-----> Build & Install Emacs" | indent
 
-# replace hello with goodbye in a new file
-cat $1/hello.txt | sed -e "s/[Hh]ello/Goodbye/g" > $1/goodbye.txt
+curl -L --silent $EMACS_SOURCE_URL | tar xz
+cd $EMACS_VERSION
+./configure --without-all --prefix=$VENDOR_DIR | indent
+make | indent
+make install | indent
+
+# Transfer binary to other server
+tar czvf $BUILD_DIR/$EMACS_VERSIO-heroku-bin.tar.gz $VENDOR_DIR
+# scp $BUILD_DIR/$EMACS_VERSIO-heroku-bin.tar.gz {{$MY_SERVER}}
+
+echo "...done" | indent

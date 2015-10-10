@@ -1,11 +1,8 @@
 #!/bin/sh
+# Usage: bin/release BUILD_DIR
 
 cat << EOF
 ---
-addons:
-  - shared-database:5mb
 config_vars:
-  PATH: bin:/usr/bin:/bin
-default_process_types:
-  hello: cat hello.txt
+  PATH: $PATH:$BUILD_DIR/vendor/bin
 EOF
