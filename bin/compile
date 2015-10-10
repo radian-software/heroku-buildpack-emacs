@@ -2,32 +2,30 @@
 # Usage: bin/compile BUILD_DIR CACHE_DIR ENV_DIR
 
 set -e
+set -o pipefail
 
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-VERSION="24.5"
-EMACS_SOURCE_URL="http://ftp.jaist.ac.jp/pub/GNU/emacs/emacs-$VERSION.tar.gz"
+VERSION=24.5
+EMACS_SOURCE_URL=http://ftpmirror.gnu.org/emacs/emacs-${VERSION}.tar.xz
 
-VENDOR_DIR=$BUILD_DIR/.heroku/vendor
+EMACS_PACKAGE=${BUILD_DIR}/emacs-${VERSION}-heroku-bin.tar.xz
+VENDOR_DIR=/app/.heroku/vendor
 
 indent() {
   sed -u 's/^/       /'
 }
 
-echo "BEGIN buildpack compile [$*]" | indent
+echo "BEGIN buildpack compile [$*] in $PWD" | indent
+echo "-----> Install Emacs" | indent
 
-echo "-----> Build & Install Emacs" | indent
-
-curl -L --silent $EMACS_SOURCE_URL | tar xz
-cd emacs-$VERSION
-./configure --without-all --without-x --prefix=$VENDOR_DIR | indent
+curl -L --silent ${EMACS_SOURCE_URL} | tar xJm --strip-components=1
+./configure --without-all --without-x --prefix=${VENDOR_DIR} | indent
 make | indent
-make install | indent
-
-# Transfer binary to other server
-tar czvf $BUILD_DIR/emacs-$VERSION-heroku-bin.tar.gz $VENDOR_DIR
-# scp $BUILD_DIR/$EMACS_VERSIO-heroku-bin.tar.gz {{$MY_SERVER}}
+make install-strip | indent
+tar cJf ${EMACS_PACKAGE} -C ${VENDOR_DIR} .
+tar xJf ${EMACS_PACKAGE} -C ${BUILD_DIR}/.heroku/vendor
 
 echo "...done" | indent
