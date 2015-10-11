@@ -14,7 +14,7 @@ indent() {
 
 echo "-----> Install Emacs" | indent
 
-make -f compile.mk build install BUILD_DIR=$BUILD_DIR | indent
+make -f $(dirname $0)/compile.mk build install BUILD_DIR=$BUILD_DIR | indent
 
 export PATH=$PATH:/app/.heroku/vendor/bin
 emacs --version | indent
