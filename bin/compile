@@ -17,7 +17,7 @@ indent() {
 echo "-----> Install Emacs" | indent
 
 mkdir -p $BUILD_DIR/.heroku/vendor
-curl -fsSL $EMACS_PACKAGE_URL | tar xJf -C $BUILD_DIR/.heroku/vendor
+curl -fsSL $EMACS_PACKAGE_URL | tar xJ -C $BUILD_DIR/.heroku/vendor
 
 echo "-----> Install Cask" | indent
 
