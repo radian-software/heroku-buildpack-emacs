@@ -18,6 +18,7 @@ echo "-----> Install Emacs" | indent
 
 mkdir -p $BUILD_DIR/.heroku/vendor
 curl -fsSL $EMACS_PACKAGE_URL | tar xJ -C $BUILD_DIR/.heroku/vendor
+export PATH=$PATH:$BUILD_DIR/.heroku/vendor/bin
 
 echo "-----> Install Cask" | indent
 
