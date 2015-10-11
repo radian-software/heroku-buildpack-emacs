@@ -8,22 +8,24 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-EMACS_PACKAGE_URL=https://github.com/kosh04/heroku-buildpack-emacs/releases/download/v1.0-beta/emacs-24.5-heroku-bin.tar.xz
-
 indent() {
   sed -u 's/^/       /'
 }
 
 echo "-----> Install Emacs" | indent
 
-mkdir -p $BUILD_DIR/.heroku/vendor
-curl -fsSL $EMACS_PACKAGE_URL | tar xJ -C $BUILD_DIR/.heroku/vendor
-export PATH=$PATH:$BUILD_DIR/.heroku/vendor/bin
+make -f compile.mk build install BUILD_DIR=$BUILD_DIR | indent
+
+export PATH=$PATH:/app/.heroku/vendor/bin
+emacs --version | indent
+
 
 echo "-----> Install Cask" | indent
 
-curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go | python
-export PATH=$PATH:$PWD/.cask/bin
+curl -fsSL "https://raw.githubusercontent.com/cask/cask/master/go" | python | indent
+
+export PATH=$PATH:/app/.cask/bin
 cask install | indent
+cp -v -R /app/.cask $BUILD_DIR
 
 echo "...done" | indent
