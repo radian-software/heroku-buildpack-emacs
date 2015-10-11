@@ -1,4 +1,4 @@
-Heroku buildpack: Hello
+Heroku buildpack: Emacs
 =======================
 
 This is an example [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks).

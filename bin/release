@@ -4,5 +4,5 @@
 cat << EOF
 ---
 config_vars:
-  PATH: $PATH:/app/.heroku/vendor/bin
+  PATH: $PATH:/app/.heroku/vendor/bin:/app/.cask/bin
 EOF
