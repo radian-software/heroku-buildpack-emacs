@@ -25,6 +25,8 @@ curl -L --silent ${EMACS_SOURCE_URL} | tar xJm --strip-components=1
 ./configure --without-all --without-x --prefix=${VENDOR_DIR} | indent
 make | indent
 make install-strip | indent
+
+mkdir -p ${BUILD_DIR}/.heroku/vendor
 tar cJf ${EMACS_PACKAGE} -C ${VENDOR_DIR} .
 tar xJf ${EMACS_PACKAGE} -C ${BUILD_DIR}/.heroku/vendor
 
