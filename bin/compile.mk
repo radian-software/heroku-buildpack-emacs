@@ -3,7 +3,7 @@
 # Usage:
 #   $ make -f compile.mk BUILD_DIR=$1
 
-VERSION=24.3
+VERSION=24.4
 EMACS_SOURCE_URL=http://ftpmirror.gnu.org/emacs/emacs-${VERSION}.tar.xz
 
 VENDOR_DIR=/app/.heroku/vendor
