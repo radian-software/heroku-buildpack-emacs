@@ -8,13 +8,23 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
+PACKAGE_URL=https://github.com/kosh04/heroku-buildpack-emacs/releases/download/v1.0-beta/emacs-24.5-heroku-bin.tar.xz
+PACKAGE=emacs.tar.xz
+
 indent() {
   sed -u 's/^/       /'
 }
 
 echo "-----> Install Emacs" | indent
 
-make -f $(dirname $0)/compile.mk build install BUILD_DIR=$BUILD_DIR | indent
+curl -fsSL -o $PACKAGE $PACKAGE_URL
+
+mkdir -p $BUILD_DIR/.heroku/vendor
+tar xf $PACKAGE -C $BUILD_DIR/.heroku/vendor
+
+# For use install Cask
+mkdir -p /app/.heroku/vendor
+tar xf $PACKAGE -C /app/.heroku/vendor
 
 export PATH=$PATH:/app/.heroku/vendor/bin
 emacs --version | indent
