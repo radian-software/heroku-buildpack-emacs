@@ -1,7 +1,11 @@
 Heroku buildpack: Emacs
 =======================
 
-This is an example [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks).
+This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
+for [GNU Emacs](https://www.gnu.org/software/emacs/) apps.
+
+[Cask](https://github.com/cask/cask) (project management tool) is
+also installed.
 
 Usage
 -----
@@ -9,26 +13,30 @@ Usage
 Example usage:
 
     $ ls
-    hello.txt
+    Cask
+    init.el
+    ...
 
-    $ heroku create --stack cedar --buildpack http://github.com/heroku/heroku-buildpack-hello.git
+    $ heroku create myapp --buildpack https://github.com/kosh04/heroku-buildpack-emacs
 
     $ git push heroku master
     ...
     -----> Heroku receiving push
-    -----> Fetching custom buildpack
-    -----> HelloFramework app detected
-    -----> Found a hello.txt
+    -----> Fetching custom git buildpack... done
+    -----> Emacs Lisp app detected
+    -----> Install Emacs
+    ...
 
-The buildpack will detect that your app has a `hello.txt` in the root. If this file has contents, it will be copied to `goodbye.txt` with instances of the world `hello` changed to `goodbye`.
+OK. your apps can execute `emacs` or `cask exec emacs`.
 
-Hacking
--------
 
-To use this buildpack, fork it on Github.  Push up changes to your fork, then create a test app with `--buildpack <your-github-url>` and push to it.
+How to compile the buildpack Emacs
+----------------------------------
 
-For example, you can change the displayed name of the buildpack to `GoodbyeFramework`. Open `bin/detect` in your editor, and change `HelloFramework` to `GoodbyeFramework`.
+[Emacs binary package](https://github.com/kosh04/heroku-buildpack-emacs/releases/tag/v1.0-beta)
+is made with the following command. (See detail `bin/compile.mk`)
 
-Commit and push the changes to your buildpack to your Github fork, then push your sample app to Heroku to test.  You should see:
+    ./configure --without-all --without-x --prefix=/app/.heroku/vendor
 
-    -----> GoodbyeFramework app detected
+Executable full path name depends on `--prefix`
+This case `emacs` is `/app/.heroku/bin/emacs`.

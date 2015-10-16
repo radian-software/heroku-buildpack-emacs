@@ -15,7 +15,7 @@ indent() {
   sed -u 's/^/       /'
 }
 
-echo "-----> Install Emacs" | indent
+echo "-----> Install Emacs"
 
 curl -fsSL -o $PACKAGE $PACKAGE_URL
 
@@ -30,22 +30,20 @@ export PATH=$PATH:/app/.heroku/vendor/bin
 emacs --version | indent
 
 
-echo "-----> Install Cask" | indent
+echo "-----> Install Cask"
 
 # TODO: How install cask with selected directory?
 export HOME=$BUILD_DIR
 export PATH=$PATH:$HOME/.cask/bin
 cd $HOME
-curl -fsSL "https://raw.githubusercontent.com/cask/cask/master/go" | python | indent
-cask install | indent
+curl -fsSL "https://raw.githubusercontent.com/cask/cask/master/go" | python 2>&1 | indent
+cask install 2&>1 | indent
 
 
-echo "-----> Setting config values" | indent
+echo "-----> Setting config values"
 
 mkdir $BUILD_DIR/.profile.d
 cat << "EOF" > $BUILD_DIR/.profile.d/emacs.sh
 PATH=$PATH:/app/.heroku/vendor/bin:/app/.cask/bin
 LANG=${LANG:-en_US.UTF-8}
 EOF
-
-echo "...done" | indent
