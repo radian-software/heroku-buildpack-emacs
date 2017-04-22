@@ -1,28 +1,32 @@
 # Build minimum Emacs
 
 # Usage:
-#   $ make -f compile.mk BUILD_DIR=$1
+#   $ make -f compile.mk [PREFIX=/path/to/dir]
 
-VERSION=24.4
-EMACS_SOURCE_URL=http://ftpmirror.gnu.org/emacs/emacs-${VERSION}.tar.xz
+PREFIX?=/app/.heroku/vendor
 
-VENDOR_DIR=/app/.heroku/vendor
+EMACS_NAME=emacs-25.2
+EMACS_ARCHIVE=${EMACS_NAME}.tar.xz
+EMACS_SOURCE_URL=http://ftpmirror.gnu.org/emacs/${EMACS_ARCHIVE}
+EMACS_PACKAGE=/app/${EMACS_NAME}-heroku-bin.tar.xz
 
-EMACS_PACKAGE=${BUILD_DIR}/emacs-${VERSION}-heroku-bin.tar.xz
+${EMACS_ARCHIVE}:
+	curl -L -O ${EMACS_ARCHIVE_URL}
+
+build: ${EMACS_ARCHIVE}
+	tar xf ${EMACS_ARCHIVE}
+	cd ${EMACS_NAME} && ./configure --without-all --without-x #--prefix=${PREFIX}
+	cd ${EMACS_NAME} && make -j9
+
+install:
+	cd ${EMACS_NAME} && make install-strip prefix=${PREFIX}
 
 ${EMACS_PACKAGE}:
-	curl -L --silent ${EMACS_SOURCE_URL} | tar xJm --strip-components=1
-	./configure --without-all --without-x --prefix=${VENDOR_DIR}
-	make
-	make install-strip
-	tar cJf ${EMACS_PACKAGE} -C ${VENDOR_DIR} .
+	${MAKE} build install
+	tar cJf ${EMACS_PACKAGE} -C ${PREFIX} .
 
-# build package
-build: ${EMACS_PACKAGE}
+install_package: ${EMACS_PACKAGE}
+	mkdir -p ${PREFIX}
+	tar xJf ${EMACS_PACKAGE} -C ${PREFIX}
 
-# install package
-install: ${EMACS_PACKAGE}
-	mkdir -p ${BUILD_DIR}/.heroku/vendor
-	tar xJf ${EMACS_PACKAGE} -C ${BUILD_DIR}/.heroku/vendor
-
-.PHONY: build install
+.PHONY: build install install_package
