@@ -31,7 +31,7 @@ install() {
 }
 
 install_from_source() {
-    make -f compile.mk build install PREFIX=$PREFIX
+    make -f "$(dirname $0)/compile.mk" build install PREFIX=$PREFIX
 }
 
 install_from_source
