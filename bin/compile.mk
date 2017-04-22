@@ -7,7 +7,7 @@ PREFIX?=/app/.heroku/vendor
 
 EMACS_NAME=emacs-25.2
 EMACS_ARCHIVE=${EMACS_NAME}.tar.xz
-EMACS_SOURCE_URL=http://ftpmirror.gnu.org/emacs/${EMACS_ARCHIVE}
+EMACS_ARCHIVE_URL=http://ftpmirror.gnu.org/emacs/${EMACS_ARCHIVE}
 EMACS_PACKAGE=/app/${EMACS_NAME}-heroku-bin.tar.xz
 
 ${EMACS_ARCHIVE}:
