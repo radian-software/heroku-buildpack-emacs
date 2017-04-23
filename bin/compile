@@ -64,4 +64,10 @@ cat << "EOF" > $BUILD_DIR/.profile.d/emacs.sh
 PATH=$PATH:$HOME/.heroku/vendor/bin
 #PATH=$PATH:$HOME/.cask/bin
 LANG=${LANG:-en_US.UTF-8}
+
+# FIXME: These variables should be set at emacs build time.
+EMACSDATA=$HOME/.heroku/vendor/share/emacs/25.2/etc/
+EMACSDOC=$EMACSDATA
+EMACSPATH=$HOME/.heroku/vendor/libexec/emacs/25.2/x86_64-unknown-linux-gnu/
+EMACSLOADPATH=$HOME/.heroku/vendor/share/emacs/25.2/site-lisp:$HOME/.heroku/vendor/share/emacs/site-lisp:$HOME/.heroku/vendor/share/emacs/25.2/lisp
 EOF
