@@ -48,8 +48,13 @@ echo "-----> Install Cask"
 # curl -fsSL "https://raw.githubusercontent.com/cask/cask/master/go" | python 2>&1 | indent
 # cask install 2>&1 | indent
 
-if [ -f setup-elnode.el ]; then
-    HOME=$BUILD_DIR emacs --script setup-elnode.el
+
+echo "----> Install Package"
+
+if [ -f $BUILD_DIR/setup-elnode.el ]; then
+    HOME=$BUILD_DIR emacs --script $BUILD_DIR/setup-elnode.el | indent
+else
+    echo "$BUILD_DIR/setup-elnode.el not found"
 fi
 
 echo "-----> Setting config values"
