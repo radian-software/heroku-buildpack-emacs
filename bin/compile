@@ -56,6 +56,7 @@ echo "-----> Setting config values"
 
 mkdir $BUILD_DIR/.profile.d
 cat << "EOF" > $BUILD_DIR/.profile.d/emacs.sh
-PATH=$PATH:$HOME/.heroku/vendor/bin#:/app/.cask/bin
+PATH=$PATH:$HOME/.heroku/vendor/bin
+#PATH=$PATH:$HOME/.cask/bin
 LANG=${LANG:-en_US.UTF-8}
 EOF
