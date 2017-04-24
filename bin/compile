@@ -9,6 +9,7 @@ CACHE_DIR=$2
 ENV_DIR=$3
 
 PREFIX=$BUILD_DIR/.heroku/vendor
+PREFIX_ORIG=/app/.heroku/vendor
 
 PACKAGE_URL=https://github.com/kosh04/heroku-buildpack-emacs/releases/download/v1.0-beta/emacs-24.5-heroku-bin.tar.xz
 PACKAGE=emacs.tar.xz
@@ -31,11 +32,13 @@ install() {
 }
 
 install_from_source() {
-    make -f "$(dirname $0)/compile.mk" build install PREFIX=$PREFIX
+    local makefile="$(dirname $0)/compile.mk"
+    # Note: Special variables (load-path,exec-path,etc) are determined at ./configure
+    make -f $makefile build install PREFIX=$PREFIX_ORIG
+    make -f $makefile install PREFIX=$PREFIX
 
     # require to download packages
-    make -f "$(dirname $0)/compile.mk" install PREFIX=/app/.heroku/vendor
-    export PATH=$PATH:/app/.heroku/vendor/bin
+    export PATH=$PATH:$PREFIX_ORIG/bin
 }
 
 install_from_source
@@ -66,10 +69,4 @@ cat << "EOF" > $BUILD_DIR/.profile.d/emacs.sh
 PATH=$PATH:$HOME/.heroku/vendor/bin
 #PATH=$PATH:$HOME/.cask/bin
 LANG=${LANG:-en_US.UTF-8}
-
-# FIXME: These variables should be set at emacs build time.
-EMACSDATA=$HOME/.heroku/vendor/share/emacs/25.2/etc/
-EMACSDOC=$EMACSDATA
-EMACSPATH=$HOME/.heroku/vendor/libexec/emacs/25.2/x86_64-unknown-linux-gnu/
-EMACSLOADPATH=$HOME/.heroku/vendor/share/emacs/25.2/site-lisp:$HOME/.heroku/vendor/share/emacs/site-lisp:$HOME/.heroku/vendor/share/emacs/25.2/lisp
 EOF
