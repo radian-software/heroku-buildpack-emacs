@@ -15,7 +15,7 @@ ${EMACS_ARCHIVE}:
 
 build: ${EMACS_ARCHIVE}
 	tar xf ${EMACS_ARCHIVE}
-	cd ${EMACS_NAME} && ./configure --without-all --without-x --prefix=${PREFIX}
+	cd ${EMACS_NAME} && ./configure --without-all --without-x --with-gnutls=yes --prefix=${PREFIX}
 	cd ${EMACS_NAME} && make -j9
 
 install:
