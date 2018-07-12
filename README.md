@@ -1,42 +1,22 @@
-Heroku buildpack: Emacs
-=======================
+# Emacs buildpack for Heroku
 
-This is a [Heroku buildpack](http://devcenter.heroku.com/articles/buildpacks)
-for [GNU Emacs](https://www.gnu.org/software/emacs/) apps.
+This is a [Heroku buildpack][buildpack] which installs [GNU
+Emacs][emacs].
 
-[Cask](https://github.com/cask/cask) (project management tool) is
-also installed.
+## Usage
 
-Usage
------
+To install Emacs for your Heroku app called `<myapp>`, run:
 
-Example usage:
+    $ heroku buildpacks:add                                 \
+        https://github.com/raxod502/heroku-buildpack-emacs  \
+        -a <myapp>
 
-    $ ls
-    Cask
-    init.el
-    ...
+After the next time you deploy your app, `emacs` will be available on
+the `PATH`.
 
-    $ heroku create myapp --buildpack https://github.com/kosh04/heroku-buildpack-emacs
+Note that this buildpack compiles Emacs from scratch on every deploy,
+which is rather slow. This could be improved in future by utilizing
+the cache; pull requests to that effect would be appreciated.
 
-    $ git push heroku master
-    ...
-    -----> Heroku receiving push
-    -----> Fetching custom git buildpack... done
-    -----> Emacs Lisp app detected
-    -----> Install Emacs
-    ...
-
-OK. your apps can execute `emacs` or `cask exec emacs`.
-
-
-How to compile the buildpack Emacs
-----------------------------------
-
-[Emacs binary package](https://github.com/kosh04/heroku-buildpack-emacs/releases/tag/v1.0-beta)
-is made with the following command. (See detail `bin/compile.mk`)
-
-    ./configure --without-all --without-x --prefix=/app/.heroku/vendor
-
-Executable full path name depends on `--prefix`
-This case `emacs` is `/app/.heroku/bin/emacs`.
+[buildpack]: https://devcenter.heroku.com/articles/buildpacks
+[emacs]: https://www.gnu.org/software/emacs/
