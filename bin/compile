@@ -5,68 +5,34 @@ set -e
 set -o pipefail
 
 BUILD_DIR=$1
-CACHE_DIR=$2
-ENV_DIR=$3
-
-PREFIX=$BUILD_DIR/.heroku/vendor
-PREFIX_ORIG=/app/.heroku/vendor
-
-PACKAGE_URL=https://github.com/kosh04/heroku-buildpack-emacs/releases/download/v1.0-beta/emacs-24.5-heroku-bin.tar.xz
-PACKAGE=emacs.tar.xz
+# CACHE_DIR=$2
+# ENV_DIR=$3
 
 indent() {
   sed -u 's/^/       /'
 }
 
+PREFIX=$BUILD_DIR/.heroku/vendor
+
 echo "-----> Install Emacs"
 
-install() {
-    curl -fsSL -o $PACKAGE $PACKAGE_URL
+emacs_name=emacs-26.1
+emacs_archive=${emacs_name}.tar.xz
+emacs_archive_url=https://ftpmirror.gnu.org/emacs/${emacs_archive}
 
-    mkdir -p $PREFIX
-    tar xf $PACKAGE -C $PREFIX
+pushd /tmp
+curl -L -O ${emacs_archive_url}
+tar -xf ${emacs_archive}
+cd ${emacs_name}
+./configure --without-all --without-x --with-gnutls=yes --prefix="$PREFIX"
+make -j9
+make install-strip prefix="$PREFIX"
+popd
 
-    # For use install Cask
-    mkdir -p /app/.heroku/vendor
-    tar xf $PACKAGE -C /app/.heroku/vendor
-}
+"$PREFIX/bin/emacs" --version | indent
 
-install_from_source() {
-    local makefile="$(dirname $0)/compile.mk"
-    # Note: Special variables (load-path,exec-path,etc) are determined at ./configure
-    make -f $makefile build install PREFIX=$PREFIX_ORIG
-    make -f $makefile install PREFIX=$PREFIX
-
-    # require to download packages
-    export PATH=$PATH:$PREFIX_ORIG/bin
-}
-
-install_from_source
-
-emacs --version | indent
-
-# echo "-----> Install Cask"
-#
-# TODO: How install cask with selected directory?
-# export HOME=$BUILD_DIR
-# export PATH=$PATH:$HOME/.cask/bin
-# cd $HOME
-# curl -fsSL "https://raw.githubusercontent.com/cask/cask/master/go" | python 2>&1 | indent
-# cask install 2>&1 | indent
-
-echo "-----> Install Package"
-
-if [ -f $BUILD_DIR/setup-elnode.el ]; then
-    HOME=$BUILD_DIR emacs --script $BUILD_DIR/setup-elnode.el | indent
-else
-    echo "$BUILD_DIR/setup-elnode.el not found"
-fi
-
-echo "-----> Setting config values"
-
-mkdir $BUILD_DIR/.profile.d
-cat << "EOF" > $BUILD_DIR/.profile.d/emacs.sh
+mkdir -p "$BUILD_DIR/.profile.d"
+cat << "EOF" > "$BUILD_DIR/.profile.d/emacs.sh"
 PATH=$PATH:$HOME/.heroku/vendor/bin
-#PATH=$PATH:$HOME/.cask/bin
 LANG=${LANG:-en_US.UTF-8}
 EOF
