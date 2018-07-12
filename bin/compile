@@ -12,7 +12,17 @@ indent() {
   sed -u 's/^/       /'
 }
 
-PREFIX=$BUILD_DIR/.heroku/vendor
+# Not sure how exactly this all works. It's important that Emacs
+# thinks it's being installed in /app, though, since it's not
+# portable. We actually have to put it in $BUILD_DIR, of course. The
+# below code is possibly relevant:
+# https://github.com/heroku/heroku-buildpack-python/blob/06b7f97effdfa3f6b6029e50a7086e9c361238ef/bin/compile#L211-L221
+
+mkdir -p "$BUILD_DIR/.heroku/vendor"
+
+if [[ "$BUILD_DIR" != /app ]]; then
+    ln -nsf "$BUILD_DIR/.heroku/vendor" /app/.heroku/vendor
+fi
 
 echo "-----> Install Emacs"
 
@@ -24,15 +34,15 @@ pushd /tmp
 curl -L -O ${emacs_archive_url}
 tar -xf ${emacs_archive}
 cd ${emacs_name}
-./configure --without-all --without-x --with-gnutls=yes --prefix="$PREFIX"
+./configure --without-all --without-x --with-gnutls=yes --prefix=/app/.heroku/vendor
 make -j9
-make install-strip prefix="$PREFIX"
+make install-strip prefix=/app/.heroku/vendor
 popd
 
-"$PREFIX/bin/emacs" --version | indent
+/app/.heroku/vendor/bin/emacs --version | indent
 
 mkdir -p "$BUILD_DIR/.profile.d"
 cat << "EOF" > "$BUILD_DIR/.profile.d/emacs.sh"
-PATH=$PATH:$HOME/.heroku/vendor/bin
+PATH=$PATH:/app/.heroku/vendor/bin
 LANG=${LANG:-en_US.UTF-8}
 EOF
