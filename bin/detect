@@ -1,9 +1,4 @@
 #!/bin/sh
 # Usage: bin/detect BUILD_DIR
 
-if [ -f $1/Cask ]; then
-  echo "Emacs Lisp"
-  exit 0
-else
-  exit 1
-fi
+echo "Emacs Lisp"
