@@ -18,5 +18,13 @@ Note that this buildpack compiles Emacs from scratch on every deploy,
 which is rather slow. This could be improved in future by utilizing
 the cache; pull requests to that effect would be appreciated.
 
+## Trivia
+
+This repository was originally forked from
+[kosh04/heroku-buildpack-emacs][upstream], but since then literally
+all of the code and documentation was rewritten, so I marked it as a
+source repository and added a license.
+
 [buildpack]: https://devcenter.heroku.com/articles/buildpacks
 [emacs]: https://www.gnu.org/software/emacs/
+[upstream]: https://github.com/kosh04/heroku-buildpack-emacs
