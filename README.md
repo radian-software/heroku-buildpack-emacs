@@ -1,7 +1,7 @@
 # Emacs buildpack for Heroku
 
 This is a [Heroku buildpack][buildpacks] which installs [GNU
-Emacs][emacs].
+Emacs][emacs] version 26.1.
 
 ## Usage
 
