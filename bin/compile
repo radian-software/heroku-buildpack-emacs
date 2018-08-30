@@ -10,21 +10,24 @@ BUILD_DIR=$1
 # ENV_DIR=$3
 
 indent() {
-  sed -u 's/^/       /'
+    sed -u 's/^/       /'
 }
 
-echo "-----> Install Emacs"
+install_emacs() {
+    pushd /tmp >/dev/null
+    curl -L -O https://github.com/raxod502/heroku-buildpack-emacs/releases/download/emacs-for-heroku-26.1/emacs-for-heroku-26.1.tar.gz
+    mkdir -p "$BUILD_DIR/app/emacs"
+    tar -C "$BUILD_DIR/app/emacs" -xf emacs-for-heroku-26.1.tar.gz
+    popd >/dev/null
 
-pushd /tmp
-curl -L -O https://github.com/raxod502/heroku-buildpack-emacs/releases/download/emacs-for-heroku-26.1/emacs-for-heroku-26.1.tar.gz
-mkdir -p "$BUILD_DIR/app/emacs"
-tar -C "$BUILD_DIR/app/emacs" -xf emacs-for-heroku-26.1.tar.gz
-popd
+    "$BUILD_DIR/app/emacs/bin/emacs" --version
 
-"$BUILD_DIR/app/emacs/bin/emacs" --version | indent
-
-mkdir -p "$BUILD_DIR/.profile.d"
-cat << "EOF" > "$BUILD_DIR/.profile.d/emacs.sh"
+    mkdir -p "$BUILD_DIR/.profile.d"
+    cat << "EOF" > "$BUILD_DIR/.profile.d/emacs.sh"
 PATH="$PATH:/app/emacs/bin"
 LANG="${LANG:-en_US.UTF-8}"
 EOF
+}
+
+echo "-----> Install Emacs"
+install_emacs | indent
