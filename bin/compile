@@ -16,11 +16,11 @@ indent() {
 install_emacs() {
     pushd /tmp >/dev/null
     curl -L -O https://github.com/raxod502/heroku-buildpack-emacs/releases/download/emacs-for-heroku-26.1/emacs-for-heroku-26.1.tar.gz
-    mkdir -p "$BUILD_DIR/app/emacs"
-    tar -C "$BUILD_DIR/app/emacs" -xf emacs-for-heroku-26.1.tar.gz
+    mkdir -p "$BUILD_DIR/emacs"
+    tar -C "$BUILD_DIR/emacs" -xf emacs-for-heroku-26.1.tar.gz
     popd >/dev/null
 
-    "$BUILD_DIR/app/emacs/bin/emacs" --version
+    "$BUILD_DIR/emacs/bin/emacs" --version
 
     mkdir -p "$BUILD_DIR/.profile.d"
     cat << "EOF" > "$BUILD_DIR/.profile.d/emacs.sh"
