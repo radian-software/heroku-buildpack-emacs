@@ -27,7 +27,7 @@ function docker {
 
 docker rm -f "${container}" 2>/dev/null
 docker pull "${image}"
-docker run --name="${container}" -d "${image}" sleep infinity
+docker run --name="${container}" --security-opt seccomp=unconfined -d "${image}" sleep infinity
 docker cp "${cwd}/build_internal.bash" "${container}:/tmp/build_internal.bash"
 docker exec -it -e VERSION="${EMACS_VERSION}" "${container}" /tmp/build_internal.bash
 docker cp "${container}:/tmp/emacs.tar.gz" - | tar -xOf - > "${cwd}/${tar}"
