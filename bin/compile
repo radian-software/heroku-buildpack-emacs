@@ -6,18 +6,32 @@ set -e
 set -o pipefail
 
 BUILD_DIR=$1
-# CACHE_DIR=$2
-# ENV_DIR=$3
+CACHE_DIR=$2
+ENV_DIR=$3
 
 indent() {
     sed -u 's/^/       /'
 }
 
+# Default version is Emacs 27.2, you can override by setting
+# EMACS_VERSION in app config, see README for supported versions.
+if [[ -f "$ENV_DIR/EMACS_VERSION" ]]; then
+    EMACS_VERSION="$(< "$ENV_DIR/EMACS_VERSION")"
+    echo "Detected Emacs version $EMACS_VERSION set in app config" | indent
+else
+    EMACS_VERSION=27.2
+    echo "Defaulting to latest Emacs version $EMACS_VERSION" | indent
+fi
+
+tag="${STACK}-emacs-${EMACS_VERSION}"
+
 install_emacs() {
     pushd /tmp >/dev/null
-    curl -L -O https://github.com/raxod502/heroku-buildpack-emacs/releases/download/emacs-for-heroku-26.1/emacs-for-heroku-26.1.tar.gz
+    url="https://github.com/raxod502/heroku-buildpack-emacs/releases/download/${tag}/${tag}.tar.gz"
+    echo "Downloading Emacs from URL: ${url}"
+    curl -fsSL -O "${url}"
     mkdir -p "$BUILD_DIR/emacs"
-    tar -C "$BUILD_DIR/emacs" -xf emacs-for-heroku-26.1.tar.gz
+    tar -C "$BUILD_DIR/emacs" -xf "${tag}.tar.gz" --strip-components=2
     popd >/dev/null
 
     "$BUILD_DIR/emacs/bin/emacs" --version

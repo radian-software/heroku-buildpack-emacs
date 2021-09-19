@@ -1,7 +1,10 @@
 # Emacs buildpack for Heroku
 
-This is a [Heroku buildpack][buildpacks] which installs [GNU
-Emacs][emacs] version 26.1.
+This is a [Heroku
+buildpack](https://devcenter.heroku.com/articles/buildpacks) which
+installs [GNU Emacs](https://www.gnu.org/software/emacs/) for use on
+server applications such as [GNU ELPA
+Mirror](https://github.com/raxod502/gnu-elpa-mirror).
 
 ## Usage
 
@@ -14,53 +17,63 @@ To install Emacs for your Heroku app called `<myapp>`, run:
 After the next time you deploy your app, `emacs` will be available on
 the `PATH`.
 
+## Configuration
+
+Supported versions of Emacs are:
+
+* `25.3`
+* `26.1`
+* `26.3`
+* `27.2`
+
+By default the latest supported version will be selected. You can
+force a specific version to be selected by setting `EMACS_VERSION`
+appropriately in the app config (e.g. `heroku config:set EMACS_VERSION
+27.2`).
+
+Supported versions of the Heroku runtime are:
+
+* `heroku-18`
+* `heroku-20`
+
+This is detected automatically during buildpack processing and cannot
+be overridden.
+
 ## How does it work?
 
-Ideally, we could just use [heroku-buildpack-apt] to install Emacs.
-Unfortunately, [this doesn't work][apt-emacs-issue], because the
-Ubuntu package for Emacs is configured to be installed in `/usr`,
-while Heroku apps are run from `/app` (and therefore any packages
-accompanying an app must live inside `/app`).
+We have a script `build.bash` in this repository which does the
+following things:
 
-You might think that we could just compile Emacs from source instead.
-However, Heroku uses Docker, and [you can't compile Emacs inside a
-Docker container][docker-emacs-issue] without changing certain
-security options that Heroku doesn't support.
+* Pull the latest version of the Heroku runtime base Docker image.
+    * Run using `--security-opt seccomp=unconfined` to support
+      pre-27.1 versions of Emacs that use some very sketchy OS
+      features as part of the build process.
+* Download the Emacs source code into it.
+* Compile and install it with a prefix of `/app/emacs`.
+* Create a tarball of that installation and export it outside the
+  container.
 
-The solution? I compile Emacs myself inside a Docker container based
-on the Heroku image, running with the necessary security options on my
-own computer, install Emacs to `/app` in the container, and then copy
-out the tarball to upload to GitHub releases on this repository. (Why
-GitHub Releases? It's an easy way to host a large binary which doesn't
-require the cooperation of another service.) At deploy time, the
-buildpack just downloads and extracts this tarball. Simple!
+Then I manually do the following:
 
-Here is how I compile Emacs to obtain the tarball you see on GitHub
-Releases:
+* Create an empty tag in this repo named `heroku-VER-emacs-VER` (where
+  the versions are for the Heroku stack and Emacs respectively).
+* Upload the tarball to that tag as a GitHub Release. Provided I
+  follow the existing naming convention, this is picked up
+  automatically by the buildpack.
 
-    $ docker run -it --security-opt seccomp=unconfined heroku/heroku:18-build
-    $ cd /tmp
-    $ wget https://ftpmirror.gnu.org/emacs/emacs-26.1.tar.xz
-    $ tar -xf emacs-26.1.tar.xz
-    $ pushd emacs-26.1
-    $ ./configure --without-all --without-x --with-gnutls=yes --prefix=/app/emacs
-    $ make -j9
-    $ make install-strip prefix=/app/emacs
-    $ popd
-    $ tar -C /app/emacs -cf emacs-for-heroku-26.1.tar.gz .
-    $ exit
-    $ docker cp <container-id>:/tmp/emacs-for-heroku-26.1.tar.gz <destination>
+## Why not...?
 
-## Trivia
+* *Install using
+  [heroku-buildpack-apt](https://github.com/heroku/heroku-buildpack-apt)*:
+  Because [it doesn't
+  work](https://github.com/heroku/heroku-buildpack-apt/issues/37),
+  which is because Emacs installations are not relocatable.
+* *Build from source at deployment time:* Because we can't use Docker
+  when executing a buildpack.
+
+## History
 
 This repository was originally forked from
-[kosh04/heroku-buildpack-emacs][upstream], but since then literally
-all of the code and documentation was rewritten, so I marked it as a
-source repository and added a license.
-
-[apt-emacs-issue]: https://github.com/heroku/heroku-buildpack-apt/issues/37
-[buildpacks]: https://devcenter.heroku.com/articles/buildpacks
-[docker-emacs-issue]: https://github.com/moby/moby/issues/22801
-[emacs]: https://www.gnu.org/software/emacs/
-[heroku-buildpack-apt]: https://github.com/heroku/heroku-buildpack-apt
-[upstream]: https://github.com/kosh04/heroku-buildpack-emacs
+[kosh04/heroku-buildpack-emacs](https://github.com/kosh04/heroku-buildpack-emacs),
+but today literally none of the original code or documentation
+remains, so I marked it as a source repository and added a license.
