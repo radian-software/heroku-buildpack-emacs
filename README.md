@@ -21,9 +21,12 @@ the `PATH`.
 
 Supported versions of Emacs are:
 
+* `25.2`
 * `25.3`
 * `26.1`
+* `26.2`
 * `26.3`
+* `27.1`
 * `27.2`
 
 By default the latest supported version will be selected. You can
