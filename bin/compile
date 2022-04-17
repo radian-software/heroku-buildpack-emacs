@@ -13,13 +13,13 @@ indent() {
     sed -u 's/^/       /'
 }
 
-# Default version is Emacs 27.2, you can override by setting
+# Default version is Emacs 28.1, you can override by setting
 # EMACS_VERSION in app config, see README for supported versions.
 if [[ -f "$ENV_DIR/EMACS_VERSION" ]]; then
     EMACS_VERSION="$(< "$ENV_DIR/EMACS_VERSION")"
     echo "Detected Emacs version $EMACS_VERSION set in app config" | indent
 else
-    EMACS_VERSION=27.2
+    EMACS_VERSION=28.1
     echo "Defaulting to latest Emacs version $EMACS_VERSION" | indent
 fi
 

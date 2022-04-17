@@ -28,6 +28,7 @@ Supported versions of Emacs are:
 * `26.3`
 * `27.1`
 * `27.2`
+* `28.1`
 
 By default the latest supported version will be selected. You can
 force a specific version to be selected by setting `EMACS_VERSION`
