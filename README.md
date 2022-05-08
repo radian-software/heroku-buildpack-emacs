@@ -10,8 +10,8 @@ Mirror](https://github.com/raxod502/gnu-elpa-mirror).
 
 To install Emacs for your Heroku app called `<myapp>`, run:
 
-    $ heroku buildpacks:add                                 \
-        https://github.com/raxod502/heroku-buildpack-emacs  \
+    $ heroku buildpacks:add                                        \
+        https://github.com/radian-software/heroku-buildpack-emacs  \
         -a <myapp>
 
 After the next time you deploy your app, `emacs` will be available on

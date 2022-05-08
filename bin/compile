@@ -27,7 +27,7 @@ tag="${STACK}-emacs-${EMACS_VERSION}"
 
 install_emacs() {
     pushd /tmp >/dev/null
-    url="https://github.com/raxod502/heroku-buildpack-emacs/releases/download/${tag}/${tag}.tar.gz"
+    url="https://github.com/radian-software/heroku-buildpack-emacs/releases/download/${tag}/${tag}.tar.gz"
     echo "Downloading Emacs from URL: ${url}"
     curl -fsSL -O "${url}"
     mkdir -p "$BUILD_DIR/emacs"
