@@ -21,13 +21,13 @@ the `PATH`.
 
 Supported versions of Emacs are:
 
-* `25.2`
-* `25.3`
-* `26.1`
-* `26.2`
-* `26.3`
-* `27.1`
-* `27.2`
+* `25.2` (for `heroku-20` and below)
+* `25.3` (for `heroku-20` and below)
+* `26.1` (for `heroku-20` and below)
+* `26.2` (for `heroku-20` and below)
+* `26.3` (for `heroku-20` and below)
+* `27.1` (for `heroku-20` and below)
+* `27.2` (for `heroku-20` and below)
 * `28.1`
 
 By default the latest supported version will be selected. You can
@@ -39,6 +39,7 @@ Supported versions of the Heroku runtime are:
 
 * `heroku-18`
 * `heroku-20`
+* `heroku-22`
 
 This is detected automatically during buildpack processing and cannot
 be overridden.
@@ -74,6 +75,19 @@ Then I manually do the following:
   which is because Emacs installations are not relocatable.
 * *Build from source at deployment time:* Because we can't use Docker
   when executing a buildpack.
+
+## Why is only Emacs 28 supported in heroku-22?
+
+Because this:
+
+```
+sysdep.c:1821:22: error: variably modified 'sigsegv_stack' at file scope
+ 1821 | static unsigned char sigsegv_stack[SIGSTKSZ];
+      |                      ^~~~~~~~~~~~~
+```
+
+If you know how to resolve the compilation error, let me know and I'd
+be happy to compile prior versions of Emacs for heroku-22.
 
 ## History
 
